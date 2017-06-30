@@ -31,7 +31,7 @@ public class ConsoleWindow : EditorWindow
     static void InitializeWindow()
     {
         var window = GetWindow<ConsoleWindow>("Unity Shell", true);
-        window.titleContent.tooltip = "Unity Shell"; // fix me
+        window.titleContent.tooltip = "Unity Shell: all around console (In Editor or In Game)"; 
         window.autoRepaintOnSceneChange = true;
         window.Show();
         window.layout = Resources.Load<GUISkin>("Skins/UnityShellDefault");
@@ -173,7 +173,7 @@ public class ConsoleWindow : EditorWindow
         #endregion
 
         #region GUILayout
-        GUI.skin = layout; //globaly sets the GUISkin 
+        //GUI.skin = layout; //globaly sets the GUISkin 
 
         #region Mini ToolBar
         //TODO: make the toolbar using the custom GUISkin, instead of default unity
@@ -217,6 +217,7 @@ public class ConsoleWindow : EditorWindow
 
         #endregion
     }
+
     [Command(CustomName = "Clear")] // added custom names, so we can have names that are simpler than the Methode name
     public static void ClearLog()
     {

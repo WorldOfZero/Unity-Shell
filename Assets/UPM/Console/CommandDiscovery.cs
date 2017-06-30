@@ -27,7 +27,7 @@ public class CommandDiscovery
                 {
                     foreach (var attribute in method.GetCustomAttributes(false).OfType<CommandAttribute>())
                     {
-                        var command = new Command(method, attribute.CustomName == "" ? method.Name : attribute.CustomName); // added so we can have a custom Name :)
+                        var command = new Command(method, string.IsNullOrEmpty(attribute.CustomName) ? method.Name : attribute.CustomName); // added so we can have a custom Name :)
 
                         if (commands.ContainsKey(command.ProgramName))
                         {
@@ -91,7 +91,5 @@ public class CommandDiscovery
             object instance = Activator.CreateInstance(activator); // activator = Type = the class/Type that has the Methode ?
             program.Invoke(instance, arguments.ToArray());
         }
-
-       // program.Invoke(null, arguments.ToArray());
     }
 }
