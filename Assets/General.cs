@@ -53,6 +53,13 @@ public class General : MonoBehaviour {
     }
 
     [Command]
+    public static void SpawnPrimitive(string name, PrimitiveType type)
+    {
+        var primitive = GameObject.CreatePrimitive(type);
+        primitive.name = name;
+    }
+
+    [Command]
     public static void FPS()
     {
         Debug.Log(1 / Time.deltaTime);

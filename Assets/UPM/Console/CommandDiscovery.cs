@@ -7,6 +7,10 @@ using UnityEngine;
 
 public class CommandDiscovery
 {
+    private List<ConversionMapping> conversions = new List<ConversionMapping>()
+    {
+        new ConversionMapping(new StringToPrimitiveConverter())
+    };
     private Dictionary<string, Command> commandMap;
 
     public static CommandDiscovery Build(params Assembly[] _assemblies)
@@ -83,13 +87,50 @@ public class CommandDiscovery
     {
         if (program.IsStatic)
         {
-            program.Invoke(null, arguments.ToArray());
+            Execute(null, program, arguments);
         }
         else
         {
             //TODO fix non Static, because then we need to execute with the class that has this Methode/Program
             object instance = Activator.CreateInstance(activator); // activator = Type = the class/Type that has the Methode ?
-            program.Invoke(instance, arguments.ToArray());
+            Execute(instance, program, arguments);
         }
+    }
+
+    private void Execute(object source, MethodInfo program, IEnumerable<string> arguments)
+    {
+        List<object> args = new List<object>();
+        int index = 0;
+        var parameters = program.GetParameters();
+        var stringArgs = arguments.ToArray();
+        foreach (var argument in stringArgs)
+        {
+            if (parameters[index].ParameterType == argument.GetType())
+            {
+                args.Add(argument);
+            }
+            else
+            {
+                args.Add(ConvertTo(argument, parameters[index].ParameterType));
+            }
+            index++;
+        }
+        program.Invoke(source, args.ToArray());
+    }
+
+    private object ConvertTo(string argument, Type parameterType)
+    {
+        foreach (var converter in conversions)
+        {
+            if (converter.SourceType == argument.GetType())
+            {
+                if (converter.TargetType == parameterType)
+                {
+                    Debug.Log("Converting with " + converter.Converter.ToString());
+                    return converter.Converter.GeneralConversion(argument);
+                }
+            }
+        }
+        return null; //TODO: Fix this
     }
 }
