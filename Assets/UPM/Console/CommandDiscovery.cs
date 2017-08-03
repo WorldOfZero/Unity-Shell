@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class CommandDiscovery
 {
+    private StringToEnumConverter enumConverter = new StringToEnumConverter();
     private List<ConversionMapping> conversions = new List<ConversionMapping>()
     {
-        new ConversionMapping(new StringToPrimitiveConverter())
     };
     private Dictionary<string, Command> commandMap;
 
@@ -131,6 +131,14 @@ public class CommandDiscovery
                 }
             }
         }
+        // Didn't find any available converters
+        if (parameterType.IsSubclassOf(typeof(Enum)))
+        {
+            Debug.Log("Converting with automatic Enum Converter");
+            enumConverter.ConversionEnumType = parameterType;
+            return enumConverter.Convert(argument);
+        }
+
         return null; //TODO: Fix this
     }
 }
